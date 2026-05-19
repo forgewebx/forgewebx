@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ForgeWebx — Budget</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #F7931E;
+    --orange-dark: #D97B10;
+    --orange-glow: rgba(247,147,30,0.15);
+    --bg: #0A0A0A;
+    --bg2: #111111;
+    --bg3: #1A1A1A;
+    --border: rgba(255,255,255,0.07);
+    --text: #F0F0F0;
+    --muted: #888;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(247,147,30,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(247,147,30,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Orange glow top */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(247,147,30,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 60px 24px 100px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 64px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .logo-icons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--orange);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--orange);
+    background: rgba(247,147,30,0.05);
+  }
+
+  .logo-icon.dashed {
+    border-style: dashed;
+    opacity: 0.6;
+  }
+
+  .brand {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  h1 span {
+    color: var(--orange);
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    font-weight: 300;
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.2s; }
+  .section:nth-child(4) { animation-delay: 0.3s; }
+  .section:nth-child(5) { animation-delay: 0.4s; }
+
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Service cards */
+  .services-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .service-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.25s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--orange);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .service-card:hover {
+    background: var(--bg3);
+    border-color: rgba(247,147,30,0.2);
+    transform: translateX(4px);
+  }
+
+  .service-card:hover::before {
+    opacity: 1;
+  }
+
+  .service-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .service-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+    font-weight: 300;
+  }
+
+  .service-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--orange);
+    white-space: nowrap;
+    margin-left: 16px;
+  }
+
+  .badge-month {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 2px;
+  }
+
+  /* Custom card */
+  .custom-card {
+    background: linear-gradient(135deg, rgba(247,147,30,0.08) 0%, rgba(247,147,30,0.03) 100%);
+    border: 1px solid rgba(247,147,30,0.3);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .custom-card::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(247,147,30,0.1), transparent 70%);
+    pointer-events: none;
+  }
+
+  .custom-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .custom-starting {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .custom-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--orange);
+    margin-bottom: 16px;
+  }
+
+  .custom-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 420px;
+    margin: 0 auto 28px;
+    font-weight: 300;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--orange);
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .cta-btn:hover {
+    background: var(--orange-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(247,147,30,0.3);
+  }
+
+  /* Footer note */
+  .footer-note {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.6s ease 0.5s both;
+  }
+
+  .footer-note p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .footer-note strong {
+    color: var(--orange);
+    font-weight: 600;
+  }
+
+  /* Back link */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    text-decoration: none;
+    margin-bottom: 48px;
+    transition: color 0.2s;
+    font-weight: 400;
+  }
+
+  .back-link:hover { color: var(--orange); }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .service-card { padding: 16px 18px; }
+    .service-name { font-size: 14px; }
+    .service-price { font-size: 15px; }
+    .custom-price { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- Back -->
+  <a href="#" class="back-link">← Back</a>
+
+  <!-- Header -->
+  <header>
+    <div class="logo-icons">
+      <div class="logo-icon">☁️</div>
+      <div class="logo-icon">📶</div>
+      <div class="logo-icon">🛡️</div>
+      <div class="logo-icon dashed">＋</div>
+    </div>
+    <div class="brand">ForgeWebx</div>
+    <h1>Our <span>Pricing</span></h1>
+    <p class="subtitle">Transparent pricing, no surprises. Choose what fits your project.</p>
+  </header>
+
+  <!-- Core Services -->
+  <div class="section">
+    <div class="section-label">Core Services</div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div>
+          <div class="service-name">Landing Page</div>
+          <div class="service-desc">High-converting single page for your product or offer</div>
+        </div>
+        <div class="service-price">€299</div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">Business Website</div>
+          <div class="service-desc">3–5 pages, fully responsive and professional</div>
+        </div>
+        <div class="service-price">€599</div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">E-commerce Store</div>
+          <div class="service-desc">Full online store with product and payment setup</div>
+        </div>
+        <div class="service-price">€999</div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">Portfolio Website</div>
+          <div class="service-desc">Showcase your work with a clean, modern design</div>
+        </div>
+        <div class="service-price">€399</div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">Simple Booking Page</div>
+          <div class="service-desc">Single page with booking — perfect for salons, barbers and small service businesses</div>
+        </div>
+        <div class="service-price">€199</div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">Website with Booking System</div>
+          <div class="service-desc">Full website with advanced booking — ideal for clinics, restaurants and spas</div>
+        </div>
+        <div class="service-price">€799</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Extra Services -->
+  <div class="section">
+    <div class="section-label">Extra Services</div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div>
+          <div class="service-name">SEO Optimization</div>
+          <div class="service-desc">Improve your visibility on Google and search engines</div>
+        </div>
+        <div class="service-price">€199</div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">Website Redesign</div>
+          <div class="service-desc">Give your existing site a modern, fresh look</div>
+        </div>
+        <div class="service-price">€449</div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">Website Maintenance</div>
+          <div class="service-desc">Monthly updates, backups and technical support</div>
+        </div>
+        <div class="service-price">€79<span class="badge-month">/mo</span></div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">Speed & Performance Optimization</div>
+          <div class="service-desc">Faster loading, better scores and user experience</div>
+        </div>
+        <div class="service-price">€149</div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">Domain & Hosting Setup</div>
+          <div class="service-desc">Full configuration of your domain and hosting</div>
+        </div>
+        <div class="service-price">€49</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add-ons -->
+  <div class="section">
+    <div class="section-label">Add-ons</div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div>
+          <div class="service-name">Logo Design</div>
+          <div class="service-desc">Professional logo with multiple formats included</div>
+        </div>
+        <div class="service-price">€149</div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">Social Media Kit</div>
+          <div class="service-desc">Banners and templates for all platforms</div>
+        </div>
+        <div class="service-price">€99</div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">Copywriting</div>
+          <div class="service-desc">Persuasive, clear text written for your audience</div>
+        </div>
+        <div class="service-price">€129</div>
+      </div>
+      <div class="service-card">
+        <div>
+          <div class="service-name">Contact Form & Email Setup</div>
+          <div class="service-desc">Working contact form connected to your email</div>
+        </div>
+        <div class="service-price">€49</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom -->
+  <div class="section">
+    <div class="section-label">Custom Project</div>
+    <div class="custom-card">
+      <h3>Something Unique in Mind?</h3>
+      <div class="custom-starting">Starting at</div>
+      <div class="custom-price">€149</div>
+      <p class="custom-desc">
+        Have a unique idea that doesn't fit the standard packages?
+        We build fully tailored web solutions based on your specific needs, goals and vision.
+      </p>
+      <a href="mailto:hello@forgewebx.com" class="cta-btn">
+        ✉ Get a Free Quote
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer note -->
+  <div class="footer-note">
+    <p>All prices are <strong>one-time payments</strong> unless stated otherwise.<br>
+    Final price may vary based on project complexity. <strong>Free consultation</strong> included with every service.</p>
+  </div>
+
+</div>
+</body>
+</html>
