@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ForgeWebx — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #F7931E;
+    --orange-dark: #D97B10;
+    --bg: #0A0A0A;
+    --bg2: #111111;
+    --bg3: #1A1A1A;
+    --border: rgba(255,255,255,0.07);
+    --text: #F0F0F0;
+    --muted: #888;
+    --white: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(247,147,30,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(247,147,30,0.03) 1px, transparent 1px);
+    background-size: 60px 60px; pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: ''; position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(247,147,30,0.10) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  .wrapper { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 60px 24px 100px; }
+
+  header { text-align: center; margin-bottom: 56px; animation: fadeDown 0.8s ease both; }
+  .logo-icons { display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; }
+  .logo-icon { width: 40px; height: 40px; border: 1.5px solid var(--orange); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: rgba(247,147,30,0.05); }
+  .logo-icon.dashed { border-style: dashed; opacity: 0.5; }
+  .brand { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
+  h1 { font-family: 'Syne', sans-serif; font-size: clamp(36px, 6vw, 54px); font-weight: 800; line-height: 1.05; color: var(--white); margin-bottom: 16px; }
+  h1 span { color: var(--orange); }
+  .subtitle { font-size: 16px; color: var(--muted); font-weight: 300; max-width: 400px; margin: 0 auto; line-height: 1.6; }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 48px; animation: fadeUp 0.6s ease 0.2s both; }
+  .filter-btn { padding: 8px 18px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg2); color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
+  .filter-btn:hover, .filter-btn.active { background: var(--orange); border-color: var(--orange); color: #000; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; animation: fadeUp 0.6s ease 0.3s both; }
+
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: all 0.3s ease; cursor: pointer; }
+  .card:hover { border-color: rgba(247,147,30,0.25); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+
+  .card-preview { height: 200px; overflow: hidden; }
+  .browser-bar { background: #1e1e1e; padding: 10px 14px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; } .dot.yellow { background: #febc2e; } .dot.green { background: #28c840; }
+  .browser-url { margin-left: 10px; font-size: 11px; color: #555; font-family: monospace; }
+  .card-bg { height: calc(100% - 33px); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; position: relative; overflow: hidden; }
+  .card-bg .mock-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; z-index: 1; }
+  .card-bg .mock-tag { font-size: 11px; opacity: 0.7; z-index: 1; letter-spacing: 0.1em; text-transform: uppercase; }
+  .card-bg::before { content: ''; position: absolute; inset: 0; opacity: 0.12; }
+
+  .bella { background: linear-gradient(135deg,#1a0a1e,#2d1033); color:#e8a0f8; }
+  .bella::before { background: radial-gradient(circle at 30% 50%,#c084fc,transparent 60%); }
+  .novamed { background: linear-gradient(135deg,#051a14,#0a2e22); color:#6ee7b7; }
+  .novamed::before { background: radial-gradient(circle at 70% 30%,#10b981,transparent 60%); }
+  .artisan { background: linear-gradient(135deg,#1a100a,#2e1a08); color:#fbbf24; }
+  .artisan::before { background: radial-gradient(circle at 50% 70%,#f59e0b,transparent 60%); }
+  .marco { background: linear-gradient(135deg,#0a0a14,#14142e); color:#93c5fd; }
+  .marco::before { background: radial-gradient(circle at 80% 20%,#3b82f6,transparent 60%); }
+  .greenleaf { background: linear-gradient(135deg,#0a1a0a,#142814); color:#86efac; }
+  .greenleaf::before { background: radial-gradient(circle at 20% 60%,#22c55e,transparent 60%); }
+  .techstart { background: linear-gradient(135deg,#0f0a1a,#1a1030); color:#c4b5fd; }
+  .techstart::before { background: radial-gradient(circle at 60% 40%,#8b5cf6,transparent 60%); }
+
+  .card-body { padding: 20px 22px 22px; }
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: var(--white); }
+  .card-type { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #000; background: var(--orange); padding: 3px 10px; border-radius: 100px; white-space: nowrap; margin-left: 10px; margin-top: 2px; }
+  .card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; margin-bottom: 14px; }
+  .card-footer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .tag { font-size: 11px; color: var(--muted); background: var(--bg3); border: 1px solid var(--border); padding: 3px 10px; border-radius: 100px; }
+
+  .cta-section { margin-top: 64px; text-align: center; padding: 40px 32px; border: 1px solid rgba(247,147,30,0.2); border-radius: 16px; background: linear-gradient(135deg,rgba(247,147,30,0.06),rgba(247,147,30,0.02)); }
+  .cta-section h2 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--white); margin-bottom: 10px; }
+  .cta-section p { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+  .cta-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--orange); color: #000; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; text-decoration: none; padding: 14px 32px; border-radius: 8px; transition: all 0.2s ease; }
+  .cta-btn:hover { background: var(--orange-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(247,147,30,0.3); }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(6px); }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--bg2); border: 1px solid rgba(247,147,30,0.25); border-radius: 20px; width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto; position: relative; animation: modalIn 0.3s ease both; }
+  @keyframes modalIn { from{opacity:0;transform:scale(0.95) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+  .modal-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border); color: var(--muted); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.2s; }
+  .modal-close:hover { color: var(--white); }
+
+  .mock-browser { border-radius: 16px 16px 0 0; overflow: hidden; }
+  .mock-browser-bar { background: #1a1a1a; padding: 10px 14px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .mock-url-bar { margin-left: 10px; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 3px 12px; font-size: 11px; color: #555; font-family: monospace; flex: 1; }
+  .mock-nav { padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .mock-nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; }
+  .mock-nav-links { display: flex; gap: 14px; }
+  .mock-nav-link { font-size: 11px; color: #666; }
+  .mock-nav-cta { font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 6px; color: #000; }
+  .mock-hero { padding: 28px 18px 20px; text-align: center; }
+  .mock-hero-badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; margin-bottom: 12px; border: 1px solid; }
+  .mock-hero h2 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; color: #fff; }
+  .mock-hero p { font-size: 12px; color: #666; line-height: 1.6; max-width: 340px; margin: 0 auto 18px; }
+  .mock-hero-btn { display: inline-block; padding: 10px 22px; border-radius: 7px; font-size: 12px; font-weight: 700; font-family: 'Syne', sans-serif; color: #000; }
+  .mock-cards-row { display: flex; gap: 8px; padding: 0 18px 24px; }
+  .mock-card-item { flex: 1; border-radius: 8px; padding: 12px 10px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); }
+  .mock-card-icon { font-size: 16px; margin-bottom: 5px; }
+  .mock-card-name { font-size: 10px; font-weight: 600; margin-bottom: 3px; }
+  .mock-card-val { font-size: 10px; color: #555; }
+
+  .modal-info { padding: 22px; }
+  .modal-info h3 { font-family: 'Syne', sans-serif; font-size: 19px; font-weight: 800; margin-bottom: 8px; }
+  .modal-info p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+  .modal-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .modal-tag { font-size: 12px; color: var(--orange); background: rgba(247,147,30,0.08); border: 1px solid rgba(247,147,30,0.2); padding: 3px 10px; border-radius: 100px; }
+  .modal-divider { height: 1px; background: var(--border); margin: 18px 0; }
+  .modal-meta { display: flex; gap: 20px; flex-wrap: wrap; }
+  .modal-meta-item label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); display: block; margin-bottom: 3px; }
+  .modal-meta-item span { font-size: 14px; font-weight: 600; color: var(--white); }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(20px)}  to{opacity:1;transform:translateY(0)} }
+  @media(max-width:480px) { .grid{grid-template-columns:1fr} h1{font-size:32px} .mock-nav-links{display:none} }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <div class="logo-icons">
+      <div class="logo-icon">☁️</div>
+      <div class="logo-icon">📶</div>
+      <div class="logo-icon">🛡️</div>
+      <div class="logo-icon dashed">＋</div>
+    </div>
+    <div class="brand">ForgeWebx</div>
+    <h1>Our <span>Work</span></h1>
+    <p class="subtitle">Real projects, real results. A glimpse of what we build.</p>
+  </header>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="landing page">Landing Page</button>
+    <button class="filter-btn" data-filter="business website">Business Website</button>
+    <button class="filter-btn" data-filter="e-commerce">E-commerce</button>
+    <button class="filter-btn" data-filter="booking">Booking</button>
+    <button class="filter-btn" data-filter="portfolio">Portfolio</button>
+  </div>
+
+  <div class="grid">
+    <div class="card" data-category="booking" data-project="bella-cuts">
+      <div class="card-preview">
+        <div class="browser-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><span class="browser-url">bellacutsalon.com</span></div>
+        <div class="card-bg bella"><div class="mock-title">Bella Cuts</div><div class="mock-tag">Hair Salon · Booking</div></div>
+      </div>
+      <div class="card-body">
+        <div class="card-header"><div class="card-title">Bella Cuts Salon</div><div class="card-type">Booking Page</div></div>
+        <p class="card-desc">Simple and elegant booking page for a hair salon in Lisbon. Clients can schedule appointments 24/7 without phone calls.</p>
+        <div class="card-footer"><span class="tag">HTML/CSS</span><span class="tag">Calendly</span><span class="tag">Mobile-first</span></div>
+      </div>
+    </div>
+
+    <div class="card" data-category="booking" data-project="novamed">
+      <div class="card-preview">
+        <div class="browser-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><span class="browser-url">novamedclinic.com</span></div>
+        <div class="card-bg novamed"><div class="mock-title">NovaMed</div><div class="mock-tag">Medical Clinic · Full Site</div></div>
+      </div>
+      <div class="card-body">
+        <div class="card-header"><div class="card-title">NovaMed Clinic</div><div class="card-type">Booking System</div></div>
+        <p class="card-desc">Full website with integrated booking system for a private medical clinic. Multi-doctor scheduling with automated email confirmations.</p>
+        <div class="card-footer"><span class="tag">React</span><span class="tag">Node.js</span><span class="tag">SEO</span></div>
+      </div>
+    </div>
+
+    <div class="card" data-category="e-commerce" data-project="artisan">
+      <div class="card-preview">
+        <div class="browser-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><span class="browser-url">artisanbrewco.com</span></div>
+        <div class="card-bg artisan"><div class="mock-title">Artisan Brew</div><div class="mock-tag">Craft Beer · E-commerce</div></div>
+      </div>
+      <div class="card-body">
+        <div class="card-header"><div class="card-title">Artisan Brew Co.</div><div class="card-type">E-commerce</div></div>
+        <p class="card-desc">Online store for a Portuguese craft beer brand. Full product catalogue, cart and Stripe payment integration with subscription options.</p>
+        <div class="card-footer"><span class="tag">Shopify</span><span class="tag">Stripe</span><span class="tag">Custom Design</span></div>
+      </div>
+    </div>
+
+    <div class="card" data-category="portfolio" data-project="marco">
+      <div class="card-preview">
+        <div class="browser-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><span class="browser-url">marcosilvaphoto.com</span></div>
+        <div class="card-bg marco"><div class="mock-title">Marco Silva</div><div class="mock-tag">Photography · Portfolio</div></div>
+      </div>
+      <div class="card-body">
+        <div class="card-header"><div class="card-title">Marco Silva Photography</div><div class="card-type">Portfolio</div></div>
+        <p class="card-desc">Minimalist portfolio for a wedding and portrait photographer. Fullscreen galleries, lazy loading and a built-in contact form.</p>
+        <div class="card-footer"><span class="tag">Next.js</span><span class="tag">Animation</span><span class="tag">Gallery</span></div>
+      </div>
+    </div>
+
+    <div class="card" data-category="landing page" data-project="greenleaf">
+      <div class="card-preview">
+        <div class="browser-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><span class="browser-url">greenleafrestaurant.com</span></div>
+        <div class="card-bg greenleaf"><div class="mock-title">GreenLeaf</div><div class="mock-tag">Restaurant · Landing</div></div>
+      </div>
+      <div class="card-body">
+        <div class="card-header"><div class="card-title">GreenLeaf Restaurant</div><div class="card-type">Landing Page</div></div>
+        <p class="card-desc">Elegant landing page for a vegan restaurant in Porto. Menu display, table reservation link and Google Maps integration.</p>
+        <div class="card-footer"><span class="tag">HTML/CSS</span><span class="tag">Google Maps</span><span class="tag">Fast Load</span></div>
+      </div>
+    </div>
+
+    <div class="card" data-category="business website" data-project="techstart">
+      <div class="card-preview">
+        <div class="browser-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><span class="browser-url">techstartlisboa.com</span></div>
+        <div class="card-bg techstart"><div class="mock-title">TechStart</div><div class="mock-tag">Startup · Business Site</div></div>
+      </div>
+      <div class="card-body">
+        <div class="card-header"><div class="card-title">TechStart Lisboa</div><div class="card-type">Business Website</div></div>
+        <p class="card-desc">5-page professional website for a tech startup. Services, team, blog and investor contact sections with full SEO optimization.</p>
+        <div class="card-footer"><span class="tag">React</span><span class="tag">SEO</span><span class="tag">Blog</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-section">
+    <h2>Ready to build yours?</h2>
+    <p>Every project starts with a conversation. Let's talk about your vision.</p>
+    <a href="forgewebx-website.html#contact" class="cta-btn">✉ Get a Free Quote</a>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">×</button>
+    <div class="mock-browser">
+      <div class="mock-browser-bar">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        <div class="mock-url-bar" id="modalUrl"></div>
+      </div>
+      <div id="modalSite"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var mockSites = {
+  'bella-cuts': `
+    <div style="background:#1a0a1e;font-family:'Georgia',serif;overflow-y:auto;max-height:70vh">
+      <!-- NAV -->
+      <div style="background:#2d1033;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;border-bottom:1px solid #3d1a44">
+        <div style="font-size:17px;font-weight:bold;color:#e8a0f8;letter-spacing:0.05em;font-style:italic">✂ Bella Cuts</div>
+        <div style="display:flex;gap:14px;align-items:center">
+          <span style="font-size:10px;color:#b88ec8">Services</span>
+          <span style="font-size:10px;color:#b88ec8">Gallery</span>
+          <span style="font-size:10px;color:#b88ec8">About</span>
+          <div style="background:#c084fc;color:#fff;padding:6px 14px;border-radius:30px;font-size:10px;font-weight:700">Book Now</div>
+        </div>
+      </div>
+      <!-- HERO -->
+      <div style="padding:40px 22px 30px;text-align:center;background:radial-gradient(ellipse at top,#3d1a44,#1a0a1e)">
+        <div style="font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:#c084fc;margin-bottom:12px">Lisbon · Est. 2019</div>
+        <div style="font-size:34px;font-weight:bold;color:#fff;line-height:1.1;margin-bottom:10px;font-style:italic">Your Beauty,<br>Our Craft</div>
+        <div style="font-size:13px;color:#b88ec8;margin-bottom:22px;line-height:1.6">Award-winning hair salon in the heart of Lisbon.<br>Where style meets personality.</div>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <div style="background:#c084fc;color:#1a0a1e;padding:11px 24px;border-radius:30px;font-size:12px;font-weight:700">Book Appointment</div>
+          <div style="border:1px solid #c084fc;color:#c084fc;padding:11px 24px;border-radius:30px;font-size:12px">See Gallery</div>
+        </div>
+      </div>
+      <!-- SERVICES -->
+      <div style="padding:30px 20px;background:#1a0a1e">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#c084fc;margin-bottom:6px">What We Offer</div>
+          <div style="font-size:20px;font-weight:bold;color:#fff;font-style:italic">Our Services</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="background:#2d1033;border:1px solid #3d1a44;border-radius:12px;padding:16px">
+            <div style="font-size:22px;margin-bottom:8px">✂️</div>
+            <div style="font-size:13px;font-weight:700;color:#e8a0f8;margin-bottom:4px">Cut & Style</div>
+            <div style="font-size:11px;color:#7a5a8a;line-height:1.5">Precision cuts tailored to your face shape and lifestyle</div>
+            <div style="font-size:12px;color:#c084fc;margin-top:8px;font-weight:600">From €25</div>
+          </div>
+          <div style="background:#2d1033;border:1px solid #3d1a44;border-radius:12px;padding:16px">
+            <div style="font-size:22px;margin-bottom:8px">🎨</div>
+            <div style="font-size:13px;font-weight:700;color:#e8a0f8;margin-bottom:4px">Color & Highlights</div>
+            <div style="font-size:11px;color:#7a5a8a;line-height:1.5">Balayage, ombré and full color with premium products</div>
+            <div style="font-size:12px;color:#c084fc;margin-top:8px;font-weight:600">From €60</div>
+          </div>
+          <div style="background:#2d1033;border:1px solid #3d1a44;border-radius:12px;padding:16px">
+            <div style="font-size:22px;margin-bottom:8px">💅</div>
+            <div style="font-size:13px;font-weight:700;color:#e8a0f8;margin-bottom:4px">Nail Art</div>
+            <div style="font-size:11px;color:#7a5a8a;line-height:1.5">Gel, acrylics and custom nail designs by our specialists</div>
+            <div style="font-size:12px;color:#c084fc;margin-top:8px;font-weight:600">From €30</div>
+          </div>
+          <div style="background:#2d1033;border:1px solid #3d1a44;border-radius:12px;padding:16px">
+            <div style="font-size:22px;margin-bottom:8px">💆</div>
+            <div style="font-size:13px;font-weight:700;color:#e8a0f8;margin-bottom:4px">Hair Treatment</div>
+            <div style="font-size:11px;color:#7a5a8a;line-height:1.5">Deep conditioning and keratin treatments for healthy hair</div>
+            <div style="font-size:12px;color:#c084fc;margin-top:8px;font-weight:600">From €40</div>
+          </div>
+        </div>
+      </div>
+      <!-- ABOUT -->
+      <div style="padding:30px 22px;background:#2d1033;border-top:1px solid #3d1a44">
+        <div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#c084fc;margin-bottom:8px">About Us</div>
+        <div style="font-size:20px;font-weight:bold;color:#fff;font-style:italic;margin-bottom:12px">A Salon That Cares</div>
+        <div style="font-size:12px;color:#b88ec8;line-height:1.7;margin-bottom:16px">At Bella Cuts, we believe a great haircut is more than just a style — it's an experience. Our team of 8 passionate stylists have trained across Europe to bring you the best in modern beauty.</div>
+        <div style="display:flex;gap:16px">
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#c084fc">500+</div><div style="font-size:9px;color:#7a5a8a;text-transform:uppercase;letter-spacing:0.1em">Happy Clients</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#c084fc">8</div><div style="font-size:9px;color:#7a5a8a;text-transform:uppercase;letter-spacing:0.1em">Stylists</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#c084fc">5★</div><div style="font-size:9px;color:#7a5a8a;text-transform:uppercase;letter-spacing:0.1em">Google Rating</div></div>
+        </div>
+      </div>
+      <!-- CONTACT -->
+      <div style="padding:28px 22px;background:#1a0a1e;border-top:1px solid #3d1a44">
+        <div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#c084fc;margin-bottom:8px">Find Us</div>
+        <div style="font-size:18px;font-weight:bold;color:#fff;font-style:italic;margin-bottom:14px">Visit Our Salon</div>
+        <div style="font-size:12px;color:#b88ec8;line-height:2">📍 Rua do Ouro 42, Lisbon<br>📞 +351 912 345 678<br>📧 hello@bellacuts.com<br>🕐 Mon–Sat: 9:00–20:00</div>
+        <div style="background:#c084fc;color:#1a0a1e;padding:12px;border-radius:10px;text-align:center;font-size:12px;font-weight:700;margin-top:18px">Book Your Appointment Online →</div>
+      </div>
+    </div>`,
+
+  'novamed': `
+    <div style="background:#f8fffe;font-family:'Arial',sans-serif;overflow-y:auto;max-height:70vh">
+      <!-- NAV -->
+      <div style="background:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;border-bottom:2px solid #d1fae5;box-shadow:0 2px 8px rgba(0,0,0,0.04)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:26px;height:26px;background:#10b981;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px">➕</div>
+          <div style="font-size:15px;font-weight:900;color:#064e3b;letter-spacing:-0.02em">Nova<span style="color:#10b981">Med</span></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:center">
+          <span style="font-size:10px;color:#6b7280">Doctors</span>
+          <span style="font-size:10px;color:#6b7280">Services</span>
+          <span style="font-size:10px;color:#6b7280">About</span>
+          <div style="background:#10b981;color:#fff;padding:7px 14px;border-radius:6px;font-size:10px;font-weight:700">Book Now</div>
+        </div>
+      </div>
+      <!-- HERO -->
+      <div style="background:linear-gradient(135deg,#064e3b,#065f46);padding:32px 22px 24px;text-align:center">
+        <div style="font-size:9px;letter-spacing:0.25em;color:#6ee7b7;text-transform:uppercase;margin-bottom:10px">Private Healthcare · Lisbon</div>
+        <div style="font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:10px">Your Health,<br>Our Priority</div>
+        <div style="font-size:12px;color:#a7f3d0;margin-bottom:20px;line-height:1.6">Specialist consultations in 24 hours.<br>Trusted by over 5,000 patients.</div>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <div style="background:#10b981;color:#fff;padding:10px 22px;border-radius:8px;font-size:11px;font-weight:700">Book Consultation</div>
+          <div style="background:rgba(255,255,255,0.1);color:#a7f3d0;padding:10px 22px;border-radius:8px;font-size:11px;border:1px solid rgba(255,255,255,0.2)">Our Doctors</div>
+        </div>
+      </div>
+      <!-- SPECIALISTS -->
+      <div style="padding:28px 20px;background:#fff">
+        <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#10b981;margin-bottom:6px">Our Team</div>
+        <div style="font-size:18px;font-weight:900;color:#064e3b;margin-bottom:16px">Meet Our Specialists</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="border:1px solid #d1fae5;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+            <div style="width:42px;height:42px;background:#d1fae5;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🩺</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:700;color:#064e3b">Dr. Ana Silva</div><div style="font-size:11px;color:#666;margin-top:2px">General Medicine · 12 years exp.</div></div>
+            <div style="background:#d1fae5;color:#065f46;padding:5px 12px;border-radius:20px;font-size:9px;font-weight:700">Available</div>
+          </div>
+          <div style="border:1px solid #d1fae5;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+            <div style="width:42px;height:42px;background:#d1fae5;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🫀</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:700;color:#064e3b">Dr. Pedro Costa</div><div style="font-size:11px;color:#666;margin-top:2px">Cardiology · 18 years exp.</div></div>
+            <div style="background:#fef3c7;color:#92400e;padding:5px 12px;border-radius:20px;font-size:9px;font-weight:700">Tomorrow</div>
+          </div>
+          <div style="border:1px solid #d1fae5;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+            <div style="width:42px;height:42px;background:#d1fae5;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🧠</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:700;color:#064e3b">Dr. Sofia Ferreira</div><div style="font-size:11px;color:#666;margin-top:2px">Neurology · 9 years exp.</div></div>
+            <div style="background:#d1fae5;color:#065f46;padding:5px 12px;border-radius:20px;font-size:9px;font-weight:700">Available</div>
+          </div>
+        </div>
+      </div>
+      <!-- ABOUT -->
+      <div style="padding:28px 22px;background:#f0fdf8;border-top:1px solid #d1fae5">
+        <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#10b981;margin-bottom:6px">About Us</div>
+        <div style="font-size:18px;font-weight:900;color:#064e3b;margin-bottom:12px">Trusted Private Healthcare</div>
+        <div style="font-size:12px;color:#4b5563;line-height:1.7;margin-bottom:16px">NovaMed was founded in 2018 with a simple mission: make private healthcare accessible, fast and personal. We combine the best technology with a human-centered approach to give you the care you deserve.</div>
+        <div style="display:flex;gap:16px">
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#10b981">5K+</div><div style="font-size:9px;color:#9ca3af;text-transform:uppercase">Patients</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#10b981">24h</div><div style="font-size:9px;color:#9ca3af;text-transform:uppercase">Appointments</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#10b981">12</div><div style="font-size:9px;color:#9ca3af;text-transform:uppercase">Specialists</div></div>
+        </div>
+      </div>
+      <!-- CONTACT -->
+      <div style="padding:28px 22px;background:#fff;border-top:1px solid #d1fae5">
+        <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#10b981;margin-bottom:6px">Contact</div>
+        <div style="font-size:18px;font-weight:900;color:#064e3b;margin-bottom:14px">Get in Touch</div>
+        <div style="font-size:12px;color:#4b5563;line-height:2.1">📍 Av. da Liberdade 210, Lisbon<br>📞 +351 210 987 654<br>📧 info@novamedclinic.com<br>🕐 Mon–Fri: 8:00–20:00</div>
+        <div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;text-align:center;font-size:12px;font-weight:700;margin-top:18px">Schedule Your Consultation →</div>
+      </div>
+    </div>`,
+
+  'artisan': `
+    <div style="background:#0f0700;font-family:'Georgia',serif;overflow-y:auto;max-height:70vh">
+      <!-- NAV -->
+      <div style="background:#1a0e05;padding:13px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;border-bottom:1px solid #3d2a10">
+        <div style="font-size:14px;font-weight:bold;color:#f59e0b;letter-spacing:0.1em;text-transform:uppercase">Artisan Brew Co.</div>
+        <div style="display:flex;gap:14px;align-items:center">
+          <span style="font-size:10px;color:#8a6a3a">Beers</span>
+          <span style="font-size:10px;color:#8a6a3a">Story</span>
+          <span style="font-size:10px;color:#8a6a3a">Find Us</span>
+          <div style="background:#f59e0b;color:#0f0700;padding:6px 14px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.05em">SHOP</div>
+        </div>
+      </div>
+      <!-- HERO -->
+      <div style="padding:36px 22px 28px;text-align:center;background:radial-gradient(ellipse at center top,#2e1a08,#0f0700)">
+        <div style="font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:#8a6a3a;margin-bottom:12px">Handcrafted in Portugal · Since 2017</div>
+        <div style="font-size:32px;font-weight:bold;color:#fbbf24;line-height:1.1;margin-bottom:10px;font-style:italic">Crafted<br>with Passion</div>
+        <div style="font-size:12px;color:#8a6a3a;margin-bottom:22px;line-height:1.6">Small-batch beers brewed with tradition,<br>character and the finest Portuguese ingredients.</div>
+        <div style="background:#f59e0b;color:#0f0700;padding:12px 28px;border-radius:4px;font-size:12px;font-weight:700;display:inline-block;letter-spacing:0.08em">SHOP ALL BEERS</div>
+      </div>
+      <!-- BEERS -->
+      <div style="padding:28px 20px;background:#0f0700">
+        <div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#8a6a3a;margin-bottom:6px">Our Brews</div>
+        <div style="font-size:20px;font-weight:bold;color:#fbbf24;font-style:italic;margin-bottom:18px">Featured Collection</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="background:#1a0e05;border:1px solid #3d2a10;border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px">
+            <div style="font-size:28px;flex-shrink:0">🍺</div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#fbbf24">Golden Pale Ale</div><div style="font-size:11px;color:#8a6a3a;margin-top:3px;line-height:1.4">Light and refreshing with citrus notes. ABV 5.2%</div></div>
+            <div style="text-align:right"><div style="font-size:14px;font-weight:700;color:#f59e0b">€3.50</div><div style="font-size:9px;color:#5a4020">per unit</div></div>
+          </div>
+          <div style="background:#1a0e05;border:1px solid #3d2a10;border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px">
+            <div style="font-size:28px;flex-shrink:0">🖤</div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#fbbf24">Dark Velvet Stout</div><div style="font-size:11px;color:#8a6a3a;margin-top:3px;line-height:1.4">Rich and smooth with chocolate undertones. ABV 6.8%</div></div>
+            <div style="text-align:right"><div style="font-size:14px;font-weight:700;color:#f59e0b">€4.00</div><div style="font-size:9px;color:#5a4020">per unit</div></div>
+          </div>
+          <div style="background:#1a0e05;border:1px solid #3d2a10;border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px">
+            <div style="font-size:28px;flex-shrink:0">🌿</div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#fbbf24">Wild Hop IPA</div><div style="font-size:11px;color:#8a6a3a;margin-top:3px;line-height:1.4">Bold and bitter with tropical hop aroma. ABV 6.1%</div></div>
+            <div style="text-align:right"><div style="font-size:14px;font-weight:700;color:#f59e0b">€3.80</div><div style="font-size:9px;color:#5a4020">per unit</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- STORY -->
+      <div style="padding:28px 22px;background:#1a0e05;border-top:1px solid #3d2a10">
+        <div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#8a6a3a;margin-bottom:6px">Our Story</div>
+        <div style="font-size:20px;font-weight:bold;color:#fbbf24;font-style:italic;margin-bottom:12px">Born in a Garage,<br>Raised in Tradition</div>
+        <div style="font-size:12px;color:#8a6a3a;line-height:1.8;margin-bottom:16px">What started as a weekend passion in a small garage in Porto has grown into one of Portugal's most loved craft beer brands. Every batch is brewed by hand with locally sourced ingredients and zero shortcuts.</div>
+        <div style="display:flex;gap:16px">
+          <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:#f59e0b">7yr</div><div style="font-size:9px;color:#5a4020;text-transform:uppercase;letter-spacing:0.1em">Brewing</div></div>
+          <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:#f59e0b">12</div><div style="font-size:9px;color:#5a4020;text-transform:uppercase;letter-spacing:0.1em">Recipes</div></div>
+          <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:#f59e0b">3★</div><div style="font-size:9px;color:#5a4020;text-transform:uppercase;letter-spacing:0.1em">Awards</div></div>
+        </div>
+      </div>
+      <!-- CONTACT -->
+      <div style="padding:28px 22px;background:#0f0700;border-top:1px solid #3d2a10">
+        <div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#8a6a3a;margin-bottom:6px">Find Us</div>
+        <div style="font-size:18px;font-weight:bold;color:#fbbf24;font-style:italic;margin-bottom:14px">Visit the Brewery</div>
+        <div style="font-size:12px;color:#8a6a3a;line-height:2.1">📍 Rua das Flores 77, Porto<br>📞 +351 222 111 333<br>📧 hello@artisanbrewco.com<br>🕐 Tue–Sun: 12:00–22:00</div>
+        <div style="background:#f59e0b;color:#0f0700;padding:12px;border-radius:6px;text-align:center;font-size:12px;font-weight:700;margin-top:18px;letter-spacing:0.05em">ORDER ONLINE — FREE DELIVERY OVER €40</div>
+      </div>
+    </div>`,
+
+  'marco': `
+    <div style="background:#000;font-family:'Helvetica Neue',sans-serif;overflow-y:auto;max-height:70vh">
+      <!-- NAV -->
+      <div style="padding:16px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#000;z-index:10;border-bottom:1px solid #111">
+        <div style="font-size:12px;font-weight:300;color:#fff;letter-spacing:0.25em;text-transform:uppercase">Marco Silva</div>
+        <div style="display:flex;gap:18px">
+          <span style="font-size:10px;color:#555;letter-spacing:0.12em;text-transform:uppercase">Work</span>
+          <span style="font-size:10px;color:#555;letter-spacing:0.12em;text-transform:uppercase">About</span>
+          <span style="font-size:10px;color:#fff;letter-spacing:0.12em;text-transform:uppercase;border-bottom:1px solid #fff;padding-bottom:1px">Contact</span>
+        </div>
+      </div>
+      <!-- HERO -->
+      <div style="background:linear-gradient(160deg,#111,#1a1a2e);padding:40px 22px 32px;text-align:center">
+        <div style="font-size:9px;letter-spacing:0.4em;color:#3b82f6;text-transform:uppercase;margin-bottom:14px">Photography</div>
+        <div style="font-size:30px;font-weight:200;color:#fff;letter-spacing:0.04em;font-style:italic;line-height:1.2;margin-bottom:10px">Capturing<br>Moments Forever</div>
+        <div style="font-size:11px;color:#555;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:22px">Wedding · Portrait · Event</div>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <div style="background:#3b82f6;color:#fff;padding:10px 22px;border-radius:2px;font-size:11px;font-weight:600;letter-spacing:0.08em">VIEW PORTFOLIO</div>
+          <div style="border:1px solid #333;color:#888;padding:10px 22px;border-radius:2px;font-size:11px;letter-spacing:0.08em">GET IN TOUCH</div>
+        </div>
+      </div>
+      <!-- WORK -->
+      <div style="padding:28px 20px;background:#0a0a0a">
+        <div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#3b82f6;margin-bottom:6px">Selected Work</div>
+        <div style="font-size:18px;font-weight:300;color:#fff;letter-spacing:0.05em;margin-bottom:18px;font-style:italic">Recent Projects</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="background:#111;border:1px solid #1a1a1a;border-radius:8px;padding:16px;display:flex;gap:14px;align-items:center">
+            <div style="width:46px;height:46px;background:linear-gradient(135deg,#1a1a2e,#0a0a14);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">💍</div>
+            <div><div style="font-size:13px;font-weight:500;color:#fff">Santos & Lima Wedding</div><div style="font-size:11px;color:#444;margin-top:3px">Quinta de Monserrate, Sintra · 2024</div></div>
+          </div>
+          <div style="background:#111;border:1px solid #1a1a1a;border-radius:8px;padding:16px;display:flex;gap:14px;align-items:center">
+            <div style="width:46px;height:46px;background:linear-gradient(135deg,#1a1a2e,#0a0a14);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">👤</div>
+            <div><div style="font-size:13px;font-weight:500;color:#fff">Corporate Portraits</div><div style="font-size:11px;color:#444;margin-top:3px">TechStart Lisboa · 2024</div></div>
+          </div>
+          <div style="background:#111;border:1px solid #1a1a1a;border-radius:8px;padding:16px;display:flex;gap:14px;align-items:center">
+            <div style="width:46px;height:46px;background:linear-gradient(135deg,#1a1a2e,#0a0a14);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🎉</div>
+            <div><div style="font-size:13px;font-weight:500;color:#fff">Product Launch Event</div><div style="font-size:11px;color:#444;margin-top:3px">Pavilhão de Portugal · 2024</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- ABOUT -->
+      <div style="padding:28px 22px;background:#000;border-top:1px solid #111">
+        <div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#3b82f6;margin-bottom:6px">About</div>
+        <div style="font-size:18px;font-weight:300;color:#fff;font-style:italic;margin-bottom:12px;letter-spacing:0.03em">The Eye Behind the Lens</div>
+        <div style="font-size:12px;color:#555;line-height:1.8;margin-bottom:16px">Based in Lisbon, I've spent over 10 years documenting love stories, human connections and brand identities. My approach is quiet, observational, and always honest — no poses, just real moments.</div>
+        <div style="display:flex;gap:20px">
+          <div><div style="font-size:22px;font-weight:300;color:#3b82f6">200+</div><div style="font-size:9px;color:#333;text-transform:uppercase;letter-spacing:0.1em">Weddings</div></div>
+          <div><div style="font-size:22px;font-weight:300;color:#3b82f6">10yr</div><div style="font-size:9px;color:#333;text-transform:uppercase;letter-spacing:0.1em">Experience</div></div>
+          <div><div style="font-size:22px;font-weight:300;color:#3b82f6">3</div><div style="font-size:9px;color:#333;text-transform:uppercase;letter-spacing:0.1em">Awards</div></div>
+        </div>
+      </div>
+      <!-- CONTACT -->
+      <div style="padding:28px 22px;background:#0a0a0a;border-top:1px solid #111">
+        <div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#3b82f6;margin-bottom:6px">Contact</div>
+        <div style="font-size:18px;font-weight:300;color:#fff;font-style:italic;margin-bottom:14px">Let's Work Together</div>
+        <div style="font-size:12px;color:#555;line-height:2.1">📍 Lisbon, Portugal<br>📧 marco@marcosilvaphoto.com<br>📞 +351 916 789 012<br>📸 @marcosilva.photo</div>
+        <div style="border:1px solid #3b82f6;color:#3b82f6;padding:12px;border-radius:4px;text-align:center;font-size:11px;font-weight:600;margin-top:18px;letter-spacing:0.1em;text-transform:uppercase">Book a Session →</div>
+      </div>
+    </div>`,
+
+  'greenleaf': `
+    <div style="background:#f9fdf5;font-family:'Georgia',serif;overflow-y:auto;max-height:70vh">
+      <!-- NAV -->
+      <div style="background:#fff;padding:13px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;border-bottom:1px solid #d4edcc;box-shadow:0 1px 6px rgba(0,0,0,0.04)">
+        <div style="font-size:16px;font-weight:bold;color:#166534;font-style:italic">🌿 GreenLeaf</div>
+        <div style="display:flex;gap:14px;align-items:center">
+          <span style="font-size:10px;color:#6b7280">Menu</span>
+          <span style="font-size:10px;color:#6b7280">About</span>
+          <span style="font-size:10px;color:#6b7280">Find Us</span>
+          <div style="background:#166534;color:#fff;padding:7px 14px;border-radius:4px;font-size:10px;font-weight:700">Reserve</div>
+        </div>
+      </div>
+      <!-- HERO -->
+      <div style="background:linear-gradient(160deg,#166534,#14532d);padding:36px 22px 28px;text-align:center">
+        <div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#86efac;margin-bottom:10px">100% Plant-Based · Porto</div>
+        <div style="font-size:30px;font-weight:bold;color:#fff;font-style:italic;margin-bottom:10px;line-height:1.1">Eat Green,<br>Feel Good</div>
+        <div style="font-size:12px;color:#86efac;margin-bottom:22px;line-height:1.6">Seasonal plant-based cuisine with heart,<br>in the centre of Porto.</div>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <div style="background:#fff;color:#166534;padding:10px 22px;border-radius:4px;font-size:11px;font-weight:700">Reserve a Table</div>
+          <div style="background:rgba(255,255,255,0.1);color:#86efac;padding:10px 22px;border-radius:4px;font-size:11px;border:1px solid rgba(255,255,255,0.3)">See Menu</div>
+        </div>
+      </div>
+      <!-- MENU -->
+      <div style="padding:28px 20px;background:#fff">
+        <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#16a34a;margin-bottom:6px">Today's Menu</div>
+        <div style="font-size:18px;font-weight:bold;color:#166534;font-style:italic;margin-bottom:18px">What's on the Table</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="border:1px solid #d4edcc;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:13px;font-weight:700;color:#166534">🥗 Wild Rocket Salad</div><div style="font-size:11px;color:#6b7280;margin-top:3px">Caramelised walnuts, pear, balsamic</div></div>
+            <div style="font-size:13px;font-weight:700;color:#16a34a">€9</div>
+          </div>
+          <div style="border:1px solid #d4edcc;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:13px;font-weight:700;color:#166534">🍛 Chickpea Curry</div><div style="font-size:11px;color:#6b7280;margin-top:3px">Coconut milk, jasmine rice, coriander</div></div>
+            <div style="font-size:13px;font-weight:700;color:#16a34a">€15</div>
+          </div>
+          <div style="border:1px solid #d4edcc;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:13px;font-weight:700;color:#166534">🍮 Chocolate Avocado Mousse</div><div style="font-size:11px;color:#6b7280;margin-top:3px">Raw cacao, maple syrup, sea salt</div></div>
+            <div style="font-size:13px;font-weight:700;color:#16a34a">€7</div>
+          </div>
+        </div>
+      </div>
+      <!-- ABOUT -->
+      <div style="padding:28px 22px;background:#f0faf0;border-top:1px solid #d4edcc">
+        <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#16a34a;margin-bottom:6px">Our Story</div>
+        <div style="font-size:18px;font-weight:bold;color:#166534;font-style:italic;margin-bottom:12px">More Than Just a Restaurant</div>
+        <div style="font-size:12px;color:#4b5563;line-height:1.8;margin-bottom:16px">GreenLeaf was born from a love for food and the planet. Every dish is crafted from seasonal, locally sourced produce — zero waste, full flavour. We believe eating well should be easy, delicious and sustainable.</div>
+        <div style="display:flex;gap:16px">
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#16a34a">100%</div><div style="font-size:9px;color:#9ca3af;text-transform:uppercase">Vegan</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#16a34a">Local</div><div style="font-size:9px;color:#9ca3af;text-transform:uppercase">Produce</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#16a34a">0</div><div style="font-size:9px;color:#9ca3af;text-transform:uppercase">Waste Policy</div></div>
+        </div>
+      </div>
+      <!-- CONTACT -->
+      <div style="padding:28px 22px;background:#fff;border-top:1px solid #d4edcc">
+        <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#16a34a;margin-bottom:6px">Find Us</div>
+        <div style="font-size:18px;font-weight:bold;color:#166534;font-style:italic;margin-bottom:14px">Come Visit Us</div>
+        <div style="font-size:12px;color:#4b5563;line-height:2.1">📍 Rua de Santa Catarina 120, Porto<br>📞 +351 222 456 789<br>📧 hello@greenleafrestaurant.com<br>🕐 Tue–Sun: 12:00–22:00</div>
+        <div style="background:#166534;color:#fff;padding:12px;border-radius:6px;text-align:center;font-size:12px;font-weight:700;margin-top:18px">Reserve Your Table →</div>
+      </div>
+    </div>`,
+
+  'techstart': `
+    <div style="background:#0a0a0f;font-family:'Arial',sans-serif;overflow-y:auto;max-height:70vh">
+      <!-- NAV -->
+      <div style="background:#0f0f1a;padding:13px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;border-bottom:1px solid #1e1e3a">
+        <div style="font-size:15px;font-weight:900;color:#fff;letter-spacing:-0.03em">Tech<span style="color:#8b5cf6">Start</span></div>
+        <div style="display:flex;gap:14px;align-items:center">
+          <span style="font-size:10px;color:#555">Services</span>
+          <span style="font-size:10px;color:#555">Team</span>
+          <span style="font-size:10px;color:#555">Blog</span>
+          <div style="background:#8b5cf6;color:#fff;padding:7px 14px;border-radius:6px;font-size:10px;font-weight:700">Get in Touch</div>
+        </div>
+      </div>
+      <!-- HERO -->
+      <div style="background:linear-gradient(135deg,#0f0a1a,#1a1030);padding:36px 22px 28px;text-align:center;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-30px;right:-30px;width:150px;height:150px;background:radial-gradient(circle,rgba(139,92,246,0.12),transparent 70%);border-radius:50%"></div>
+        <div style="font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:#8b5cf6;margin-bottom:10px">Web · Cloud · AI</div>
+        <div style="font-size:28px;font-weight:900;color:#fff;margin-bottom:10px;line-height:1.1;letter-spacing:-0.02em">Building Tomorrow,<br><span style="color:#8b5cf6">Today.</span></div>
+        <div style="font-size:12px;color:#555;margin-bottom:22px;line-height:1.6">Lisbon-based. Globally minded.<br>We turn bold ideas into real products.</div>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <div style="background:#8b5cf6;color:#fff;padding:10px 22px;border-radius:8px;font-size:11px;font-weight:700">Start a Project</div>
+          <div style="border:1px solid #1e1e3a;color:#888;padding:10px 22px;border-radius:8px;font-size:11px">See Our Work</div>
+        </div>
+      </div>
+      <!-- SERVICES -->
+      <div style="padding:28px 20px;background:#0a0a0f">
+        <div style="font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:#8b5cf6;margin-bottom:6px">What We Do</div>
+        <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:18px;letter-spacing:-0.01em">Our Services</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="background:#0f0f1a;border:1px solid #1e1e3a;border-radius:10px;padding:16px;display:flex;gap:14px;align-items:flex-start">
+            <div style="width:40px;height:40px;background:rgba(139,92,246,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💻</div>
+            <div><div style="font-size:13px;font-weight:700;color:#fff">Web & Mobile Development</div><div style="font-size:11px;color:#555;margin-top:4px;line-height:1.5">Custom-built apps and websites. React, Next.js, React Native.</div></div>
+          </div>
+          <div style="background:#0f0f1a;border:1px solid #1e1e3a;border-radius:10px;padding:16px;display:flex;gap:14px;align-items:flex-start">
+            <div style="width:40px;height:40px;background:rgba(139,92,246,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">☁️</div>
+            <div><div style="font-size:13px;font-weight:700;color:#fff">Cloud Infrastructure</div><div style="font-size:11px;color:#555;margin-top:4px;line-height:1.5">AWS & Azure setup, DevOps pipelines, scalable architecture.</div></div>
+          </div>
+          <div style="background:#0f0f1a;border:1px solid #1e1e3a;border-radius:10px;padding:16px;display:flex;gap:14px;align-items:flex-start">
+            <div style="width:40px;height:40px;background:rgba(139,92,246,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🤖</div>
+            <div><div style="font-size:13px;font-weight:700;color:#fff">AI & Data Analytics</div><div style="font-size:11px;color:#555;margin-top:4px;line-height:1.5">Machine learning integration, dashboards, business intelligence.</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- TEAM -->
+      <div style="padding:28px 22px;background:#0f0f1a;border-top:1px solid #1e1e3a">
+        <div style="font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:#8b5cf6;margin-bottom:6px">The Team</div>
+        <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:16px">People Behind the Code</div>
+        <div style="display:flex;gap:10px">
+          <div style="flex:1;background:#0a0a0f;border:1px solid #1e1e3a;border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:24px;margin-bottom:6px">👨‍💻</div>
+            <div style="font-size:11px;font-weight:700;color:#fff">João Mendes</div>
+            <div style="font-size:9px;color:#8b5cf6;margin-top:2px">Lead Dev</div>
+          </div>
+          <div style="flex:1;background:#0a0a0f;border:1px solid #1e1e3a;border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:24px;margin-bottom:6px">👩‍🎨</div>
+            <div style="font-size:11px;font-weight:700;color:#fff">Rita Lopes</div>
+            <div style="font-size:9px;color:#8b5cf6;margin-top:2px">UX Design</div>
+          </div>
+          <div style="flex:1;background:#0a0a0f;border:1px solid #1e1e3a;border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:24px;margin-bottom:6px">👨‍💼</div>
+            <div style="font-size:11px;font-weight:700;color:#fff">Carlos Rei</div>
+            <div style="font-size:9px;color:#8b5cf6;margin-top:2px">Strategy</div>
+          </div>
+        </div>
+      </div>
+      <!-- CONTACT -->
+      <div style="padding:28px 22px;background:#0a0a0f;border-top:1px solid #1e1e3a">
+        <div style="font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:#8b5cf6;margin-bottom:6px">Contact</div>
+        <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:14px">Let's Build Something</div>
+        <div style="font-size:12px;color:#555;line-height:2.1">📍 Av. Fontes Pereira de Melo 6, Lisbon<br>📧 hello@techstartlisboa.com<br>📞 +351 210 654 321<br>🔗 linkedin.com/techstartlisboa</div>
+        <div style="background:#8b5cf6;color:#fff;padding:12px;border-radius:8px;text-align:center;font-size:12px;font-weight:700;margin-top:18px">Start Your Project →</div>
+      </div>
+    </div>`
+};
+
+var projectMeta = {
+  'bella-cuts': { url:'bellacutsalon.com', title:'Bella Cuts Salon', desc:'Simple and elegant booking page for a hair salon in Lisbon.', tags:['HTML/CSS','Calendly','Mobile-first'], meta:[['Service','Simple Booking Page'],['Price','€199'],['Delivery','5 days'],['Industry','Beauty']] },
+  'novamed':    { url:'novamedclinic.com', title:'NovaMed Clinic', desc:'Full website with integrated booking system for a private medical clinic.', tags:['React','Node.js','SEO'], meta:[['Service','Booking System'],['Price','€799'],['Delivery','14 days'],['Industry','Healthcare']] },
+  'artisan':    { url:'artisanbrewco.com', title:'Artisan Brew Co.', desc:'Online store for a Portuguese craft beer brand.', tags:['Shopify','Stripe','Custom Design'], meta:[['Service','E-commerce'],['Price','€999'],['Delivery','21 days'],['Industry','Food & Drink']] },
+  'marco':      { url:'marcosilvaphoto.com', title:'Marco Silva Photography', desc:'Minimalist portfolio for a wedding photographer.', tags:['Next.js','Animation','Gallery'], meta:[['Service','Portfolio Website'],['Price','€399'],['Delivery','7 days'],['Industry','Photography']] },
+  'greenleaf':  { url:'greenleafrestaurant.com', title:'GreenLeaf Restaurant', desc:'Elegant landing page for a vegan restaurant in Porto.', tags:['HTML/CSS','Google Maps','Fast Load'], meta:[['Service','Landing Page'],['Price','€299'],['Delivery','5 days'],['Industry','Restaurant']] },
+  'techstart':  { url:'techstartlisboa.com', title:'TechStart Lisboa', desc:'5-page professional website for a tech startup.', tags:['React','SEO','Blog'], meta:[['Service','Business Website'],['Price','€599'],['Delivery','10 days'],['Industry','Technology']] }
+};
+
+function openModal(key) {
+  var p = projectMeta[key];
+  if (!p) return;
+  document.getElementById('modalUrl').textContent = p.url;
+  document.getElementById('modalSite').innerHTML = mockSites[key] || '';
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.card').forEach(function(card) {
+  card.addEventListener('click', function() { openModal(card.getAttribute('data-project')); });
+});
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+document.querySelectorAll('.filter-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    var filter = btn.getAttribute('data-filter');
+    document.querySelectorAll('.card').forEach(function(card) {
+      card.style.display = (filter === 'all' || card.getAttribute('data-category') === filter) ? 'block' : 'none';
+    });
+  });
+});
+</script>
+</body>
+</html>
